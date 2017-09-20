@@ -1,0 +1,4 @@
+#!/bin/bash
+~/Documents/FH/MasterThesis_MatthiasPosch/java/openmuc/framework/bin/openmuc start # &
+testrpc -m "warrior minimum breeze raven garden express solar flavor obvious twenty maximum actress" &
+

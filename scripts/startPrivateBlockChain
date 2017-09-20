@@ -1,0 +1,5 @@
+#!/bin/bash
+geth-private --datadir /Volumes/UserData/mposch/Library/Ethereum --balance 10000 -v
+#geth-private ---balance 10000 -v
+#geth-private  --datadir /Volumes/UserData/mposch/Documents/FH/MasterThesis_MatthiasPosch/etherum/privateBlockChain/ --autoMine
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+geth --testnet --rpc --syncmode "full"
+
+

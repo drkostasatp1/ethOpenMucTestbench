@@ -1,0 +1,3 @@
+#!/bin/bash -x
+/Applications/Ethereum\ Wallet.app/Contents/MacOS/Ethereum\ Wallet --ipc /Volumes/UserData/mposch/Library/Ethereum/testnet/geth.ipc
+

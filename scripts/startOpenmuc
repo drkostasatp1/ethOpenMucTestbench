@@ -1,0 +1,2 @@
+#!/bin/bash
+~/Documents/FH/MasterThesis_MatthiasPosch/java/openmuc/framework/bin/openmuc start -fg

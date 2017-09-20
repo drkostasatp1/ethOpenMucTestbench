@@ -1,0 +1,48 @@
+
+****************************************
+ **** TEST NET Rinkeby                 *
+ ***************************************
+ 
+ CONTRACT ADDRESS
+ 
+ 0xa58a3e890094b809527fe4a3ec0ebfd057eafc98
+ 
+ 
+> personal.newAccount("qaywsxedc")
+"0x6dd5aa86b7707857e8fd2fb104a4261fc184b10a"
+> 
+ Json:
+ {"address":"6dd5aa86b7707857e8fd2fb104a4261fc184b10a","crypto":{"cipher":"aes-128-ctr","ciphertext":"f138f6c7c718fe4c822c5e3662095007b86b92449e8e0497ac39b7dcab4baea6","cipherparams":{"iv":"aae0dcba76f224af009daa5d3b687919"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"667b291d0ec1ec48b0ba874116b186d5d913782b4694b42c15f45b4680484f63"},"mac":"03014089b3799d7a8edd46b51a30c4306fac018fd0dedfa85de7b6e0cc282b55"},"id":"b8f7295e-6663-4342-b565-4a1a73c71b59","version":3}
+ 
+ Faucet url 
+  https://gist.github.com/mposch/c01843068609efa37938213814bf818a
+  /Volumes/UserData/mposch/Library/Ethereum/testnet/geth.ipc
+ 
+ start:
+ geth --rinkeby
+ 
+ MACBOOK KERSTIN ACCOUNT DATA
+ 0x648480d8f163d08af06760b21b3f3a1648503058
+
+ ***************************************
+ **** TEST NET Ropsten                 *
+ ***************************************
+ 
+ "0xb50c2838ff532689047695f02ae68a11a638d825"
+> eth.coinbase
+"0xb50c2838ff532689047695f02ae68a11a638d825"
+> test net account
+ 
+ start: 
+ geth --testnet --mine --rpc
+ 
+ CONTRACT ADDRESS
+ 
+ 0x333aa92cd8ded6b27bafe6e2f1b9ab272a74b614
+ 
+ SECOND USER (KERSTINS MACBOOK)
+ 0xa8808fe53cc87c9329425a8c0ea794a0e615db6e
+ 
+ ipc endpoint:
+ /Volumes/UserData/mposch/Library/Ethereum/testnet/geth.ipc
+ 
