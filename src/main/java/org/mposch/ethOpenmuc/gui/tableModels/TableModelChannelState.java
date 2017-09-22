@@ -9,6 +9,7 @@ import org.mposch.ethOpenmuc.ChannelState;
 import org.mposch.ethOpenmuc.contracts.ContractBean;
 import org.mposch.ethOpenmuc.gui.MainWindow;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
+import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 public class TableModelChannelState extends AbstractTableModel implements java.util.Observer {
 
 	String					colNames[]	= { "Index", "Source", "Id", "Timestamp", "Value", "Sync to Blockchain",
-			"Sync to OpenMuc", "Status", "Age[s]" };
+			"Sync to OpenMuc", "Status", "Age[s]", "gas spent" };
 	@Autowired
 	private ContractBean	cb;
 	@Autowired
@@ -62,25 +63,31 @@ public class TableModelChannelState extends AbstractTableModel implements java.u
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-
+		Channel channel = channelState.getChannelAtIndex(rowIndex);
+		if (channel == null) return null;
+		Record record = channel.getRecord();
+		if (record == null) return null;
+		
+		
 		switch (columnIndex) {
 			case 0:
 				return rowIndex;
 			case 1:
-				return channelState.getChannelAtIndex(rowIndex).getSource();
+				return channel.getSource();
 			case 2:
-				return channelState.getChannelAtIndex(rowIndex).getId();
+				return channel.getId();
 			case 3:
-				return new Date(channelState.getChannelAtIndex(rowIndex).getRecord().getTimestamp()).toString();
+				return new Date(record.getTimestamp()).toString();
 			case 4:
-				return channelState.getChannelAtIndex(rowIndex).getRecord().getValue();
+				return record.getValue();
 			case 5:
-				return channelState.getChannelAtIndex(rowIndex).isSyncToBlockchain();
+				return channel.isSyncToBlockchain();
 			case 6:
-				return channelState.getChannelAtIndex(rowIndex).isSyncToOpenMuc();
+				return channel.isSyncToOpenMuc();
 			case 7:
-				return channelState.getChannelAtIndex(rowIndex).getBlockchainStatus();
-			case 8: return (System.currentTimeMillis() - channelState.getChannelAtIndex(rowIndex).getRecord().getTimestamp() ) / 1000;
+				return channel.getBlockchainStatus();
+			case 8: return (System.currentTimeMillis() - record.getTimestamp() ) / 1000;
+			case 9: return channel.getGasSpent().toString();
 			default:
 				return null;
 		}// end switch
@@ -100,8 +107,11 @@ public class TableModelChannelState extends AbstractTableModel implements java.u
 		switch (columnIndex) {
 			case 4:
 				Channel ch = channelState.getChannelAtIndex(rowIndex);
-				ch.getRecord().setValue(aValue.toString());
-				ch.getRecord().setTimestamp(System.currentTimeMillis());
+				if (ch == null) return;
+				Record record = ch.getRecord();
+				if (record == null) return;
+				record.setValue(aValue.toString());
+				record.setTimestamp(System.currentTimeMillis());
 				// Set the channel to be ready for broadcast
 				ch.setBlockchainStatus("READY");
 				break;

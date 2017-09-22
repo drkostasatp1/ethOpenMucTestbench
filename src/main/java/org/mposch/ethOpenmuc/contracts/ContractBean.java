@@ -278,19 +278,25 @@ public class ContractBean {
 	public void removeAll() {
 
 		//  CompletableFuture.supplyAsync(() -> {
-			int i = 0;
-			Address adr;
+			int max = 0;
+			//Address adr;
 			try
 			{
-
-				while (contract.getCount().get().getValue().intValue() != 0)
+				max =  contract.getCount().get().getValue().intValue();
+				
+				for (int i = 0; i < max; i++)
 				{
+					Address adr;
 					i++;
 					adr = contract.getStringAtIndex(new Uint256(0)).get();
 					System.out.println("Deleting (" + i + "):" + adr.toString() + ", " + contract.getString(adr).get());
-					contract.deleteString(adr).get();
+					
+					CompletableFuture.supplyAsync(() -> {
+						return contract.deleteString(adr);
+					
+					});
 				}
-				gui.Success("Deleted Items:" + i);
+				gui.Success("Submitted transaction to delete: " + max);
 			}
 			catch (Exception e)
 			{

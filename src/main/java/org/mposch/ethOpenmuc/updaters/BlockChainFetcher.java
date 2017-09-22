@@ -15,6 +15,7 @@ import org.mposch.ethOpenmuc.gui.GuiController;
 import org.mposch.ethOpenmuc.gui.tableModels.ContractTableModelRaw;
 import org.mposch.ethOpenmuc.gui.tableModels.TableModelChannelState;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
+import org.mposch.ethOpenmuc.updaters.openMucDatatypes.simpleChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.datatypes.Address;
@@ -49,7 +50,6 @@ public class BlockChainFetcher implements Runnable {
 			Channel c;
 			// Try to load a contract if it is not already done
 			if (contractBean.isValid() == false) contractBean.loadContract();
-			
 			if (contractBean.isValid() == false)
 				throw new Exception("Contract not Valid. Create or Load a Storage Contract.");
 			Uint256 maxUint256 = contractBean.getContract().getCount().get();
@@ -58,23 +58,45 @@ public class BlockChainFetcher implements Runnable {
 			{
 				String JSONString = contractBean.getStringAtIndexBlocking(i);
 				// This initiates a JSON Parser
-				
-				try{
-				ObjectMapper om = new ObjectMapper();
-				// The Parser needs two things: The JSON, and the properly
-				// annotated class:
-				c = om.readValue(JSONString, Channel.class);
-				// c.toString();
-				c.setSource("BLOCKCHAIN");
-				this.channelState.put(c);
-				}catch (JsonParseException | JsonMappingException jse)
+				try
 				{
-					gui.equals("Json Parsing error: " + jse.getMessage());
+					ObjectMapper om = new ObjectMapper();
+					// The Parser needs two things: The JSON, and the properly
+					// annotated class:
+					c = om.readValue(JSONString, Channel.class);
+					// if the value is stored using simple storage, the reord
+					// field wikll be null:
+					if (c.getRecord() == null)
+					{
+						c = om.readValue(JSONString, simpleChannel.class);
+					}
+					// c.toString();
+					c.setSource("BLOCKCHAIN");
+					this.channelState.put(c);
 				}
+				catch (JsonParseException | JsonMappingException jse)
+				{
+					// The paring of the channel failed. Try to parse a simple
+					// channel
+					try
+					{
+
+						ObjectMapper om = new ObjectMapper();
+						c = om.readValue(JSONString, simpleChannel.class);
+						c.setSource("BLOCKCHAIN");
+						this.channelState.put(c);
+					}
+
+					catch (JsonParseException | JsonMappingException jse2)
+					{
+						gui.equals("Json Parsing error: " + jse2.getMessage());
+					}
+				}
+
 			}
 
 			System.out.println("BlockChainFetcher.run(): END ");
-		
+
 			end = System.currentTimeMillis();
 			System.out.print("Runtime: " + Long.toString(end - start) + "ms");
 

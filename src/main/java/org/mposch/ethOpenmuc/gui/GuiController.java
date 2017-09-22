@@ -46,7 +46,7 @@ private ContractTableModelRaw tableModelRaw;
 @Autowired
 private ContractBean contractBean;
 @Autowired
-private TransactionMonitor transactionMonitor;
+private RangeChecking transactionMonitor;
 /**
  * 
  */

@@ -37,10 +37,13 @@ public class Config {
 	public static final long	OPENMUCUPDATERATE		= 1;
 	public static final long	BALANCEUPDATERATE		= 10;
 	public static final long	BLOCKCHAINUPDATERATE	= 10;
+	public static final long	TRANSACTION_RETRY		= 3;
+
 	// Query the exchange rates every two minutes
 	public static final long	EXCHANGERATEUPDATE		= 120;
-	// Changing this value will alter the hash calculatio for stored values. Therfore, all stored items will be lost
-	
+	// Changing this value will alter the hash calculatio for stored values.
+	// Therfore, all stored items will be lost
+
 	public static final int		ADDRESSLENGTH			= 16;
 
 	private JsonChannelList		theList;

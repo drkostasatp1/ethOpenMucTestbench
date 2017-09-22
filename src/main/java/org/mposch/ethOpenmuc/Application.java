@@ -16,6 +16,7 @@ import org.mposch.ethOpenmuc.updaters.BalanceUpdater;
 import org.mposch.ethOpenmuc.updaters.OpenMucFetcher;
 import org.mposch.ethOpenmuc.updaters.RateUpdater;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Record;
+import org.mposch.ethOpenmuc.updaters.openMucDatatypes.simpleChannel;
 import org.mposch.solidityContractWrapper.RecordStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -107,6 +108,8 @@ public class Application {
 			// Hash: " +tx);
 			// });
 
+			// Test a simple channel json
+			
 		};
 
 	}

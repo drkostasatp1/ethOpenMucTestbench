@@ -38,6 +38,7 @@ import org.mposch.ethOpenmuc.updaters.BlockChainFetcher;
 import org.mposch.ethOpenmuc.updaters.OpenMucFetcher;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Record;
+import org.mposch.ethOpenmuc.updaters.openMucDatatypes.simpleChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Component;
@@ -110,6 +111,7 @@ public class MainWindow {
 	private JTextField				txtBalance;
 	private JButton					buttonDeleteAll;
 	private JComboBox<String>		comboBoxCurrencySelector;
+	private JCheckBox				checkBoxSimpleChannel;
 
 	/**
 	 * Create the application.
@@ -127,8 +129,7 @@ public class MainWindow {
 	public void initialize() {
 		Preferences p = Preferences.userNodeForPackage(MainWindow.class);
 		frame = new JFrame();
-		    
-        
+
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 1200, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -416,7 +417,16 @@ public class MainWindow {
 				jcb.transferFocus();
 				JOptionPane.showMessageDialog(frame, jcb, "select or type a value", JOptionPane.QUESTION_MESSAGE);
 				String s = (String) jcb.getSelectedItem();
-				Channel ch = new Channel();
+
+				Channel ch;
+				if (checkBoxSimpleChannel.isSelected())
+				{
+					 ch = new simpleChannel();
+				}
+				else
+				{
+					 ch = new Channel();
+				}
 				ch.setId(s);
 				ch.setSource("EDITOR");
 				ch.setType("DOUBLE");
@@ -505,6 +515,11 @@ public class MainWindow {
 		comboBoxCurrencySelector.setBounds(1113, 51, 77, 27);
 		comboBoxCurrencySelector.setModel(currencyComboBoxModel);
 		frame.getContentPane().add(comboBoxCurrencySelector);
+
+		checkBoxSimpleChannel = new JCheckBox("Use Simple Storage");
+		checkBoxSimpleChannel.setSelected(true);
+		checkBoxSimpleChannel.setBounds(415, 213, 199, 23);
+		frame.getContentPane().add(checkBoxSimpleChannel);
 
 		chckbxRunBlockchainupdater.addItemListener(new ItemListener() {
 
@@ -603,5 +618,9 @@ public class MainWindow {
 
 	public JComboBox getComboBoxCurrencySelector() {
 		return comboBoxCurrencySelector;
+	}
+
+	public JCheckBox getCheckBoxSimpleChannel() {
+		return checkBoxSimpleChannel;
 	}
 }

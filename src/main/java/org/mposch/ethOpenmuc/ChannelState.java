@@ -18,6 +18,7 @@ import org.mposch.ethOpenmuc.contracts.ContractBean;
 import org.mposch.ethOpenmuc.gui.GuiController;
 import org.mposch.ethOpenmuc.gui.tableModels.TableModelChannelState;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
+import org.mposch.ethOpenmuc.updaters.openMucDatatypes.simpleChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.stereotype.Controller;
@@ -59,7 +60,6 @@ public class ChannelState extends Observable {
 		this.data = new HashMap<String, Channel>();
 		this.indexes = new ArrayList();
 	}
-
 	private boolean needsUpdate(Channel value) {
 		String key = getKey(value);
 		// System.out.println("Check update requirements for:" + key);
@@ -69,7 +69,8 @@ public class ChannelState extends Observable {
 		if ((stored.getRecord().getTimestamp()) < (value.getRecord().getTimestamp())) return true;
 		return false;
 	}
-
+	
+	
 	public Channel getChannelAtIndex(int index) {
 		return this.data.get(indexes.get(index));
 	}
@@ -78,7 +79,6 @@ public class ChannelState extends Observable {
 		this.data.clear();
 		this.indexes.clear();
 	}
-
 	/**
 	 * Updates a value in the channel State. If a channel is already present,
 	 * only timestamp and value are updated! This method is synchronized.
@@ -137,7 +137,7 @@ public class ChannelState extends Observable {
 		Set channels = this.data.entrySet();
 		for (Channel c : this.data.values())
 		{
-			if (c.isSyncToBlockchain() == true) postChannelOnBlockchain(c);
+				if (c.isSyncToBlockchain() == true) postChannelOnBlockchain(c);
 		}
 	}
 
@@ -148,34 +148,52 @@ public class ChannelState extends Observable {
 	 * @param c
 	 */
 	public void postChannelOnBlockchain(Channel c) {
-		if (!c.getBlockchainStatus().equals("TRANSACTION COMPLETE")) try
+		if (c.getBlockchainStatus().equals("READY") ) 
+			
+			try
 		{
-			Address adr = generateAddress(c);
 			// Transmit to blockchain, without waiting for receipt.
-			String data = c.toJsonString();
-			// System.out.println("Will transact into Blockchain: " + data);
-			// TODO Improove this with reactive pattern
-			c.setBlockchainStatus("PENDING");
-			tableModelChannelState.fireTableDataChanged();
-
 			// THIS NEED TO BE TESTED AND COMMENTED..
 			// Post the Transaction on a background thread:
-			CompletableFuture.supplyAsync(() -> {
+		
+				
+				
+				CompletableFuture.supplyAsync(() -> {
 				try
 				{
-					contractBean.mergeStringBlocking(adr, data);
+					System.out.println("ChannelState.postChannelOnBlockchain(): " + c.getId());
+					c.setBlockchainStatus("PENDING");
+					tableModelChannelState.fireTableDataChanged();
+					Address adr = generateAddress(c);
+					String data = c.toJsonString();
+					TransactionReceipt tr;
+					tr = contractBean.mergeStringBlocking(adr, data);
 					c.setBlockchainStatus("TRANSACTION COMPLETE");
+					c.setFailedTransacitons(0);
+					c.accumulateGasSpent(tr.getGasUsed());
+					
 					tableModelChannelState.fireTableDataChanged();
 				}
-				catch (InterruptedException | ExecutionException e)
+				catch (InterruptedException | ExecutionException | IOException e)
 				{
+					
 					gui.Error("Error During Transaction: " + e.getMessage());
+					// Reset the Blockchain state, try to re transmit:
+					int failedTransactions = c.getFailedTransacitons();
+					// Retry the transaction for some times
+					if (failedTransactions <= Config.TRANSACTION_RETRY)
+					{
+						c.setBlockchainStatus("READY");
+						c.setFailedTransacitons(failedTransactions+1);
+					}else c.setBlockchainStatus("FAILED");
+					
+					tableModelChannelState.fireTableDataChanged();
 					return false;
 				}
 				return true;
 			}
 
-			);
+			);  // Completable future
 
 		}
 
@@ -197,8 +215,6 @@ public class ChannelState extends Observable {
 	 * @return
 	 */
 	public Address generateAddress(Channel c) {
-
-		
 		MessageDigest md = null;
 		byte[] digest = null;
 		byte[] truncatedDigest = new byte[Config.ADDRESSLENGTH];
@@ -235,7 +251,6 @@ public class ChannelState extends Observable {
 			retVal.add(this.getChannelAtIndex(i).getId());
 		}
 		return retVal;
-
 	}
 
 	public Channel get(String key) {

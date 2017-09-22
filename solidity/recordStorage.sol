@@ -1,5 +1,4 @@
 pragma solidity ^0.4.1;
-
 /*******************************************************************************************
  * A Simple CRUD Storage contract to enable the storage of Strings with user persmission management
   * based on the tutorial from Rob Hitchens, Solidity CRUD. (Url insertion not possible here, solc does not compile the file in that case)
@@ -13,18 +12,24 @@ contract recordStorage {
     string data;
     uint index;
 }
-  struct userPermissions{
+ struct userPermissions{
     bool write;
     bool read;
 }
+struct RanngeCheckValues{
+    uint high;
+    uint low;
+}
+
  /*******************************************************************************************
  * Define Global Variables 
     owner and creationTime (blocktime) will be set upon contract creation
  *******************************************************************************************/
- 	string public version = "1.2";
+ 	string public version = "1.4";
 	address public owner = msg.sender;
     uint public creationTime = now;
- 
+    RanngeCheckValues private rangeCheckValues;
+    
   // Address is a 20 byte identifier (160 Bits)
   // this is the main structure holding the data. Comparable to a hash table, it contains a mapping from a address to a string (key value)
     
@@ -67,6 +72,8 @@ contract recordStorage {
   // These events could be used to trigger updates on the remote side. Web3j can be used to observe these events
   event notifyAll();
   event notify(string id);
+  event outOfBounds(address userAddress, uint value);
+  
     
 /*******************************************************************************************
  * This is the contract Constructor that is executed once the contract is created
@@ -74,6 +81,7 @@ contract recordStorage {
  * msg.sender is available to all functions 
     *******************************************************************************************/
  function recordStorage()
+ public
  {
      // Set the permission for the owner
      setPermissionWrite(owner, true);
@@ -210,12 +218,58 @@ returns (bool permission)
 {
 	return theUserPermissions[adr].write;
 }
-function setPermissionRead(address user, bool perm)  onlyBy(owner)
+function setPermissionRead(address user, bool perm)  onlyBy(owner) public
 {
     theUserPermissions[user].read = perm;
 }
-function setPermissionWrite(address user, bool perm)  onlyBy(owner)
+function setPermissionWrite(address user, bool perm)  onlyBy(owner) public
 {
     theUserPermissions[user].write = perm;
 }
+
+ /*******************************************************************************************
+   *	Functions to perform the simple range checking functionality 
+   *******************************************************************************************/
+
+function isInRange(uint value) requireRead() public constant returns (bool inRange)
+{
+    if ( (value < rangeCheckValues.low) || (value>rangeCheckValues.high)  )
+    {
+        // disable logging to enable simple calling of the contract
+       outOfBounds(msg.sender,value);
+       return false;
+      }
+      else return true;
+}
+function getBoundedValue (uint value) requireRead() public constant returns (uint retVal)
+{
+    if (isInRange(value)) return value;
+    else
+    if (value < rangeCheckValues.low) 
+        return rangeCheckValues.low;
+    else 
+        return rangeCheckValues.high;
+}
+
+ function getHighValue() requireRead()
+    public
+    constant
+    returns(uint highValue)
+  {
+      return rangeCheckValues.high;
+  }
+ function getLowValue() requireRead()
+    public
+    constant
+    returns(uint lowValue)
+  {
+      return rangeCheckValues.low;
+  }
+  
+function setRangeValues(uint high, uint low)  onlyBy(owner) public
+{
+    rangeCheckValues.high = high;
+    rangeCheckValues.low = low;
+}
+
 }// end contract

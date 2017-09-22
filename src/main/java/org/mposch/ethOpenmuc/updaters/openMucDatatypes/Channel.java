@@ -2,8 +2,10 @@ package org.mposch.ethOpenmuc.updaters.openMucDatatypes;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigInteger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,28 +18,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *  This classrepresents a Channel within OpenMuc. Actual values are containes within the Record property
  * 
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "id", "type", "record" })
+
 
 public class Channel {
 
 	@JsonProperty("id")
-	private String	id;
+	protected String	id;
 	@JsonProperty("type")
 	private String	type;
 	@JsonProperty("record")
-	private Record record;
+	protected Record record;
 	@JsonIgnore
-	private boolean syncToBlockchain;
+	protected boolean syncToBlockchain;
 	@JsonIgnore
-	private boolean syncToOpenMuc;
+	protected boolean syncToOpenMuc;
 	// Probably use this field if conflicting channel ids are present..
 	@JsonIgnore
-	private int priority;
+	protected int priority;
 	@JsonIgnore
-	private String source;
+	protected String source;
 	@JsonIgnore
-	private String blockchainStatus = "";
+	protected String blockchainStatus = "";
+	@JsonIgnore
+	protected int failedTransacitons = 0;
+	@JsonIgnore
+	protected BigInteger gasSpent;
 	/**
 	 * No args constructor for use in serialization
 	 * 
@@ -45,6 +52,7 @@ public class Channel {
 public Channel()
 {
 	super();
+	
 }
 	/**
 	 * 
@@ -78,12 +86,10 @@ public Channel()
 	public void setType(String type) {
 		this.type = type;
 	}
-
 	@JsonProperty("record")
 	public Record getRecord() {
 		return record;
 	}
-
 	@JsonProperty("record")
 	public void setRecord(Record record) {
 		this.record = record;
@@ -134,5 +140,24 @@ public String getBlockchainStatus() {
 }
 public void setBlockchainStatus(String blockchainStatus) {
 	this.blockchainStatus = blockchainStatus;
+}
+public int getFailedTransacitons() {
+	return failedTransacitons;
+}
+public void setFailedTransacitons(int failedTransacitons) {
+	this.failedTransacitons = failedTransacitons;
+}
+public BigInteger getGasSpent() {
+	if (this.gasSpent != null) return gasSpent;
+	else
+		return BigInteger.ZERO;
+}
+public void setGasSpent(BigInteger gasSpent) {
+	this.gasSpent = gasSpent;
+}
+public void accumulateGasSpent(BigInteger gasSpent)
+{
+	if (this.gasSpent == null) this.gasSpent = BigInteger.ZERO;
+	this.gasSpent = this.gasSpent.add(gasSpent);
 }
 }

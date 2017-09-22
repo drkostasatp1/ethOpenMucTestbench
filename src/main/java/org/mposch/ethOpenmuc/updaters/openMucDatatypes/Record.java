@@ -32,6 +32,9 @@ protected String value;
 * 
 */
 public Record() {
+	this.timestamp = System.currentTimeMillis();
+	this.flag = "VALID";
+	this.value="0";
 }
 
 /**
