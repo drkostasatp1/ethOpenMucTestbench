@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
 
+import org.web3j.abi.datatypes.generated.Int256;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,6 +47,8 @@ public class Channel {
 	protected int failedTransacitons = 0;
 	@JsonIgnore
 	protected BigInteger gasSpent;
+	@JsonIgnore
+	protected Int256 limitedValue;
 	/**
 	 * No args constructor for use in serialization
 	 * 
@@ -136,7 +140,7 @@ public void setSyncToOpenMuc(boolean syncToOpenMuc) {
 	this.syncToOpenMuc = syncToOpenMuc;
 }
 public String getBlockchainStatus() {
-	return blockchainStatus;
+	return this.blockchainStatus;
 }
 public void setBlockchainStatus(String blockchainStatus) {
 	this.blockchainStatus = blockchainStatus;
@@ -159,5 +163,11 @@ public void accumulateGasSpent(BigInteger gasSpent)
 {
 	if (this.gasSpent == null) this.gasSpent = BigInteger.ZERO;
 	this.gasSpent = this.gasSpent.add(gasSpent);
+}
+public Int256 getLimitedValue() {
+	return limitedValue;
+}
+public void setLimitedValue(Int256 limitedValue) {
+	this.limitedValue = limitedValue;
 }
 }

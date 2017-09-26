@@ -119,7 +119,7 @@ public class ContractTests {
 			test = "Test Iteration: " + Integer.toString(a);
 			System.out.println(test.toString());
 
-			transactionReceipt = cb.mergeStringBlocking(adr, test);
+			transactionReceipt = cb.mergeStringFast(adr, test).get();
 
 		}
 
@@ -134,7 +134,7 @@ public class ContractTests {
 			try
 			{
 				TransactionReceipt transactionReceipt = null;
-				transactionReceipt = cb.mergeStringBlocking(adr, test);
+				transactionReceipt = cb.mergeStringFast(adr, test).get();
 				System.out.println("Transactionhash for insert: " + transactionReceipt.getTransactionHash());
 				System.out.println("Trying to retrieve a value from the contract");
 				// Call the contract

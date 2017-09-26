@@ -55,6 +55,11 @@ private GuiController guiController;
 		}
 	}
 
+	public Double getRate (String key)
+	{
+		return this.currencies.get(key);
+	}
+	
 	@Override
 	public int getSize() {
 		// TODO Auto-generated method stub

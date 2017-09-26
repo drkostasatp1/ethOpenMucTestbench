@@ -64,11 +64,15 @@ public class OpenMucFetcher implements Runnable {
 				if ((ch.getRecord().getValue() != null) && (ch.getRecord() != null))
 				{
 					ch.setSource("OPENMUC");
-					ch.setBlockchainStatus("READY");
+					// Set the channel to ready only if no other transaction is pending. Channel in the READY state will be included in the blockchain updater cycle.
+					if (!ch.getBlockchainStatus().equals("PENDING"))
+						ch.setBlockchainStatus("READY");
+					
 					ch.setPriority(1);
+					
 					// now update the corresponding index of the table an put
 					// the Value into the channelState
-					int i = channelState.put(ch);
+					channelState.put(ch);
 
 				}
 			}

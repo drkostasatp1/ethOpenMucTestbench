@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.mposch.ethOpenmuc.contracts.ContractBean;
+import org.mposch.ethOpenmuc.gui.GasCounter;
 import org.mposch.ethOpenmuc.gui.GuiController;
 import org.mposch.ethOpenmuc.gui.tableModels.TableModelChannelState;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.stereotype.Controller;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.generated.Int256;
 import org.web3j.crypto.Keys;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.utils.Numeric;
@@ -49,6 +51,8 @@ public class ChannelState extends Observable {
 	private ContractBean				contractBean;
 	@Autowired
 	private GuiController				gui;
+	@Autowired
+	private GasCounter					gasCounter;
 	private HashMap<String, Channel>	data;
 	// Store indexes to priovide a consistend ordering..
 	private ArrayList<String>			indexes;
@@ -60,6 +64,7 @@ public class ChannelState extends Observable {
 		this.data = new HashMap<String, Channel>();
 		this.indexes = new ArrayList();
 	}
+
 	private boolean needsUpdate(Channel value) {
 		String key = getKey(value);
 		// System.out.println("Check update requirements for:" + key);
@@ -69,8 +74,7 @@ public class ChannelState extends Observable {
 		if ((stored.getRecord().getTimestamp()) < (value.getRecord().getTimestamp())) return true;
 		return false;
 	}
-	
-	
+
 	public Channel getChannelAtIndex(int index) {
 		return this.data.get(indexes.get(index));
 	}
@@ -79,6 +83,7 @@ public class ChannelState extends Observable {
 		this.data.clear();
 		this.indexes.clear();
 	}
+
 	/**
 	 * Updates a value in the channel State. If a channel is already present,
 	 * only timestamp and value are updated! This method is synchronized.
@@ -137,7 +142,25 @@ public class ChannelState extends Observable {
 		Set channels = this.data.entrySet();
 		for (Channel c : this.data.values())
 		{
-				if (c.isSyncToBlockchain() == true) postChannelOnBlockchain(c);
+			if ((c.isSyncToBlockchain() == true) && (c.getBlockchainStatus().equals("READY")))
+				postChannelOnBlockchain(c);
+			// Update the channel limits as reported by the smart contract
+			try
+			{
+				Int256 tmp256;
+				Double tmpDouble = new Double (c.getRecord().getValue());
+				long tmpLong = Math.round(tmpDouble.doubleValue());
+				
+				tmp256 = new Int256(tmpLong);
+				Int256 retVal;
+				retVal = contractBean.getContract().getBoundedValue(tmp256).get();
+				c.setLimitedValue(retVal);
+			}
+			catch (Exception e)
+			{
+				gui.Error("Error during limiting: " + e.getMessage());
+			}
+
 		}
 	}
 
@@ -148,64 +171,52 @@ public class ChannelState extends Observable {
 	 * @param c
 	 */
 	public void postChannelOnBlockchain(Channel c) {
-		if (c.getBlockchainStatus().equals("READY") ) 
-			
+
+		CompletableFuture.supplyAsync(() -> {
 			try
-		{
-			// Transmit to blockchain, without waiting for receipt.
-			// THIS NEED TO BE TESTED AND COMMENTED..
-			// Post the Transaction on a background thread:
-		
-				
-				
-				CompletableFuture.supplyAsync(() -> {
-				try
-				{
-					System.out.println("ChannelState.postChannelOnBlockchain(): " + c.getId());
-					c.setBlockchainStatus("PENDING");
-					tableModelChannelState.fireTableDataChanged();
-					Address adr = generateAddress(c);
-					String data = c.toJsonString();
-					TransactionReceipt tr;
-					tr = contractBean.mergeStringBlocking(adr, data);
-					c.setBlockchainStatus("TRANSACTION COMPLETE");
-					c.setFailedTransacitons(0);
-					c.accumulateGasSpent(tr.getGasUsed());
-					
-					tableModelChannelState.fireTableDataChanged();
-				}
-				catch (InterruptedException | ExecutionException | IOException e)
-				{
-					
-					gui.Error("Error During Transaction: " + e.getMessage());
-					// Reset the Blockchain state, try to re transmit:
-					int failedTransactions = c.getFailedTransacitons();
-					// Retry the transaction for some times
-					if (failedTransactions <= Config.TRANSACTION_RETRY)
-					{
-						c.setBlockchainStatus("READY");
-						c.setFailedTransacitons(failedTransactions+1);
-					}else c.setBlockchainStatus("FAILED");
-					
-					tableModelChannelState.fireTableDataChanged();
-					return false;
-				}
-				return true;
+			{
+				System.out.println("ChannelState.postChannelOnBlockchain(): " + c.getId() + "Channel State"
+						+ c.getBlockchainStatus());
+				c.setBlockchainStatus("PENDING");
+				tableModelChannelState.fireTableDataChanged();
+				Address adr = generateAddress(c);
+				String data = c.toJsonString();
+				TransactionReceipt tr;
+				tr = contractBean.mergeStringFast(adr, data).get();
+
+				c.setBlockchainStatus("TRANSACTION COMPLETE");
+				c.setFailedTransacitons(0);
+				c.accumulateGasSpent(tr.getGasUsed());
+
+				tableModelChannelState.fireTableDataChanged();
 			}
+			catch (InterruptedException | ExecutionException | IOException e)
+			{
 
-			);  // Completable future
+				gui.Error("Error During Transaction: " + e.getMessage());
+				// Reset the Blockchain state, try to re transmit:
+				int failedTransactions = c.getFailedTransacitons();
+				// Retry the transaction for some times
+				if (failedTransactions <= Config.TRANSACTION_RETRY)
+				{
+					c.setBlockchainStatus("READY");
+					c.setFailedTransacitons(failedTransactions + 1);
+				}
+				else c.setBlockchainStatus("FAILED");
 
+				tableModelChannelState.fireTableDataChanged();
+				return false;
+			}
+			return true;
 		}
 
-		catch (Exception e)
-		{
-			System.out.println("ChannelState.postOnBlockchain()");
-			System.out.println(e.getMessage());
-		}
-		// This could be a starting point to fire the table update, but i want
-		// to update the table only if blockchain events occur
-		//
+		); // Completable future
+
 	}
+
+	// This could be a starting point to fire the table update, but i want
+	// to update the table only if blockchain events occur
+	//
 
 	/**
 	 * This method will take a channel and generate an apropirate storage
@@ -240,8 +251,7 @@ public class ChannelState extends Observable {
 			Address adr = new Address(hashString);
 			return adr;
 		}
-		
-		
+
 	}
 
 	public ArrayList<String> getAllId() {

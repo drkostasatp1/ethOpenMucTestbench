@@ -1,7 +1,9 @@
 package org.mposch.ethOpenmuc.gui.tableModels;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Observable;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -12,6 +14,8 @@ import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Channel;
 import org.mposch.ethOpenmuc.updaters.openMucDatatypes.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.web3j.abi.datatypes.generated.Int256;
+import org.web3j.abi.datatypes.generated.Uint256;
 
 /**
  * This class controls the raw data Table. This class shoudl be sble to react to
@@ -25,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class TableModelChannelState extends AbstractTableModel implements java.util.Observer {
 
 	String					colNames[]	= { "Index", "Source", "Id", "Timestamp", "Value", "Sync to Blockchain",
-			"Sync to OpenMuc", "Status", "Age[s]", "gas spent" };
+			"Sync to OpenMuc", "Status", "Age[s]", "gas spent", "Limited Value" };
 	@Autowired
 	private ContractBean	cb;
 	@Autowired
@@ -67,8 +71,8 @@ public class TableModelChannelState extends AbstractTableModel implements java.u
 		if (channel == null) return null;
 		Record record = channel.getRecord();
 		if (record == null) return null;
-		
-		
+		Int256 limitedValue = channel.getLimitedValue();
+
 		switch (columnIndex) {
 			case 0:
 				return rowIndex;
@@ -86,11 +90,20 @@ public class TableModelChannelState extends AbstractTableModel implements java.u
 				return channel.isSyncToOpenMuc();
 			case 7:
 				return channel.getBlockchainStatus();
-			case 8: return (System.currentTimeMillis() - record.getTimestamp() ) / 1000;
-			case 9: return channel.getGasSpent().toString();
+			case 8:
+				return (System.currentTimeMillis() - record.getTimestamp()) / 1000;
+			case 9:
+				return channel.getGasSpent().toString();
+			case 10: {
+				if (limitedValue == null) return "x";
+				else return limitedValue.getValue().toString();
+
+			}
+
 			default:
 				return null;
 		}// end switch
+
 	}
 
 	/**

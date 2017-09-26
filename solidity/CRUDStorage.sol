@@ -1,13 +1,14 @@
-pragma solidity ^0.4.1;
-/*************************************************************************
- * A Simple CRUD (Create, read, update, delete) Storage contract 
- * to enable the storage of Strings 
- * with user persmission management
- * based on the tutorial from Rob Hitchens, Solidity CRUD. 
- * (Url insertion not possible here, solc does not compile the file in that case)
- *************************************************************************/
-  
-contract recordStorage {
+pragma solidity ^0.4.16;
+/*******************************************************************************************
+ * A Simple CRUD Storage contract to enable the storage of Strings with user persmission management
+  * based on the tutorial from Rob Hitchens, Solidity CRUD. (Url insertion not possible here, solc does not compile the file in that case)
+ *******************************************************************************************/
+// Make the contract mortal and ownable, and inherit user permissions modifiers
+import "./userPermissions.sol";
+import "./mortal.sol";
+import "./versionable.sol";
+
+ contract CRUDStorage is mortal, userPermissions, versionable {        
 /*******************************************************************************************
  * Define Types 
  *******************************************************************************************/
@@ -15,55 +16,17 @@ contract recordStorage {
     string data;
     uint index;
 }
- struct userPermissions{
-    bool write;
-    bool read;
-}
-struct RanngeCheckValues{
-    int high;
-    int low;
-}
+
  /*******************************************************************************************
  * Define Global Variables 
     owner and creationTime (blocktime) will be set upon contract creation
  *******************************************************************************************/
- 	string public version = "1.5";
-	address public owner = msg.sender;
-    uint public creationTime = now;
-    RanngeCheckValues private rangeCheckValues;
-    uint public lastCalled = now;    
   // Address is a 20 byte identifier (160 Bits)
   // this is the main structure holding the data. Comparable to a hash table, it contains a mapping from a address to a string (key value)
-    
      mapping(address => recordStruct) private stringStructs;
-  // Store the user permissions:
-     mapping(address => userPermissions) private theUserPermissions;
-  // Store an array of addresses to provide iteration capabilities
+   // Store an array of addresses to provide iteration capabilities
      address[] private stringIndex;
-     
-/*******************************************************************************************
-* Function Modifyers. These wrap Functions and execute them based on Conditions. 
- *******************************************************************************************/
- modifier onlyBy(address _account)
-    {
-        require(msg.sender == _account);
-        // Do not forget the "_;"! It will
-        // be replaced by the actual function
-        // body when the modifier is used.
-        _;
-    }
-  modifier requireRead()
-  {
-   require (theUserPermissions[msg.sender].read);
-    _;
-  }
-  modifier requireWrite()
-  {
-   require (theUserPermissions[msg.sender].read);
-    _;
-  }
-     
-     
+
 /*******************************************************************************************
  * Define Events 
  *******************************************************************************************/
@@ -78,18 +41,17 @@ struct RanngeCheckValues{
   
     
 /*******************************************************************************************
+ * Constructor
  * This is the contract Constructor that is executed once the contract is created
  * The method will store the creator of the contract to enable user permissions management 
  * msg.sender is available to all functions 
     *******************************************************************************************/
- function recordStorage()
+ function CRUDStorage()
  public
  {
-     // Set the permission for the owner
-     setPermissionWrite(owner, true);
-     setPermissionRead(owner, true);
+     setVersion("1.6-with inheritannce");
+     setDescription("Simple CRUD Contract with user permissions");
  }
-  
   /*******************************************************************************************
    *    This function returns a boolean value, True if the given key is already registered 
    *    Available publicly
@@ -109,10 +71,10 @@ struct RanngeCheckValues{
   function setString(
     address userAddress, 
     string data) 
+    requireWrite()
     public
     returns(uint index)
 {
-     require (theUserPermissions[msg.sender].write);
      require(!contains(userAddress));
     //if(contains(userAddress)) throw;
     stringStructs[userAddress].data = data;
@@ -123,7 +85,6 @@ struct RanngeCheckValues{
         data);
     return stringIndex.length-1;
 }
-
    /*******************************************************************************************
    *    This Function will Delete a String from the contract. It will not free space in the 
    *	blockchain (that is impossible), but the data structure so that the item is unavailable. 
@@ -152,7 +113,6 @@ struct RanngeCheckValues{
    *	Returns a String that is stored at a specific address. 
    *    Available publicly
    *******************************************************************************************/
-  
   function getString(address userAddress) requireRead()
     public 
     constant
@@ -203,95 +163,4 @@ function updateString(address userAddress, string userData)  requireWrite()
   {
       return stringIndex[index];
   }
-  
-/*******************************************************************************************
- * Following are functions to set and reset the permissions of users. 
- *******************************************************************************************/
-function getPermissionRead(address adr) 
-public 
-constant
-returns (bool permission)
-{
-	return theUserPermissions[adr].read;
-}
-
-
-
-function getPermissionWrite(address adr) 
-public 
-constant
-returns (bool permission)
-{
-	return theUserPermissions[adr].write;
-}
-function setPermissionRead(address user, bool perm)  onlyBy(owner) public
-{
-    theUserPermissions[user].read = perm;
-}
-function setPermissionWrite(address user, bool perm)  onlyBy(owner) public
-{
-    theUserPermissions[user].write = perm;
-}
-
- /*******************************************************************************************
-   *	Functions to perform the simple range checking functionality 
- *******************************************************************************************/
-
-
-
-/****************************************************************
-* This method will return true if a vlaue is in a
-* specified range and false if the value is out of bounds
-* The methos is marked constant, and therefore is not allowed 
-* to modify the state. (not yet compiler enforced)
-******************************************************************/
-function isInRange(int value) requireRead() public constant requireRead() 
-returns (bool inRange) 
-{
-	// Not possible to log the call time because of constant
-	//lastCalled = now;
-    if ((value < rangeCheckValues.low) || (value > rangeCheckValues.high))
-    {
-      //Post notification - (not possible because of the constant modifier)
-      // outOfBounds(msg.sender,value);
-       return false;
-      }
-      else return true;
-}
-/*******************************************************************************************
-* This method will return a value that is bound by the limits set by the smart contract owner
-*******************************************************************************************/
-function getBoundedValue (int value) requireRead() public constant requireRead() 
-returns (int retVal) 
-{
-    if (isInRange(value)) return value;
-    else
-    if (value < rangeCheckValues.low) 
-        return rangeCheckValues.low;
-    else 
-        return rangeCheckValues.high;
-}
-/*******************************************************************************************
-* Getters and Setters follow below
-*******************************************************************************************/
- function getHighValue() requireRead()
-    public
-    constant
-    returns(int highValue)
-  {
-      return rangeCheckValues.high;
-  }
- function getLowValue() requireRead()
-    public
-    constant
-    returns(int lowValue)
-  {
-      return rangeCheckValues.low;
-  }
-function setRangeValues(int high, int low)  onlyBy(owner) public
-{
-    rangeCheckValues.high = high;
-    rangeCheckValues.low = low;
-}
-
-}// end contract
+ }// end contract

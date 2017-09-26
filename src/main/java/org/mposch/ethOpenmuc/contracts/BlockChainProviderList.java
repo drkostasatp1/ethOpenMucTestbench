@@ -37,10 +37,12 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 	// private ArrayList<BcProvider> data;
 	public BlockChainProviderList() {
 		this.add("http://localhost:8545");
+		
 		this.add("https://ropsten.infura.io/cSOwB0UnVQUlOb7ycFS5");
-		this.add("/Volumes/UserData/mposch/Library/Ethereum/rinkeby/geth.ipc");
-		this.add("/Volumes/UserData/mposch/Library/Ethereum/testnet/geth.ipc");
-		this.add("/Volumes/UserData/mposch/Library/Ethereum/geth.ipc");
+		String home = System.getProperty("user.home");
+		this.add(home + "/Library/Ethereum/rinkeby/geth.ipc");
+		this.add(home +"/Library/Ethereum/testnet/geth.ipc");
+		this.add(home +"/Library/Ethereum/geth.ipc");
 	}
 /**
  * This metod will return a fresh web3j instance in any case.

@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import javax.annotation.PostConstruct;
 
 import org.mposch.ethOpenmuc.gui.MainWindow;
+import org.mposch.ethOpenmuc.gui.GasCounter;
 import org.mposch.ethOpenmuc.gui.GuiController;
 import org.mposch.ethOpenmuc.gui.tableModels.ContractTableModelRaw;
 import org.mposch.solidityContractWrapper.RecordStorage;
@@ -57,7 +58,7 @@ public class ContractBean {
 	private MainWindow					mainWindow;
 	@Autowired
 	private ContractTableModelRaw		contractTableModelRaw;
-
+	@Autowired private GasCounter gasCounter;
 	private HashMap<Address, String>	simpleCache;
 	private ArrayList<Address>			indexCache;
 
@@ -101,6 +102,8 @@ public class ContractBean {
 			// Check if i am the owner
 			mainWindow.getTxtContractValidity().setText(t);
 			mainWindow.getTxtContractValidity().setBackground(Color.GREEN);
+			// To
+			gasCounter.setGasPrice(contract.getGasPrice().doubleValue());
 			// Query Owner:
 
 			// Kick of the Table models to initialize the Table
@@ -112,6 +115,7 @@ public class ContractBean {
 			// TODO Auto-generated catch block
 			this.gui.Error("Not possible to load and validate Contract: " + e.getMessage());
 			this.contract = null;
+			
 
 		}
 
@@ -121,6 +125,7 @@ public class ContractBean {
 
 		CompletableFuture.supplyAsync(() -> {
 			this.loadContract(mainWindow.getTxtStorageLocation().getText());
+			
 			return true;
 		});
 
@@ -160,6 +165,7 @@ public class ContractBean {
 
 			contract = RecordStorage.deploy(blockChainProviderList.getWeb3j(), ce, contract.GAS_PRICE,
 					contract.GAS_LIMIT, BigInteger.ZERO).get();
+			gasCounter.addGas(contract.getTransactionReceipt().get());
 
 			if (this.isValid())
 			{
@@ -232,15 +238,15 @@ public class ContractBean {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public TransactionReceipt mergeStringBlocking(Address adr, String str)
-			throws InterruptedException, ExecutionException {
-
-		if (contains(adr) == true)
-		{
-			return contract.updateString(adr, new Utf8String(str)).get();
-		}
-		else return contract.setString(adr, new Utf8String(str)).get();
-	}
+//	public TransactionReceipt mergeStringBlocking(Address adr, String str)
+//			throws InterruptedException, ExecutionException {
+//
+//		if (contains(adr) == true)
+//		{
+//			return contract.updateString(adr, new Utf8String(str)).get();
+//		}
+//		else return contract.setString(adr, new Utf8String(str)).get();
+//	}
 
 	/**
 	 * This method will initiate a merge transaction, without waiting for the
@@ -263,6 +269,7 @@ public class ContractBean {
 			transactionReceipt = contract.updateString(adr, new Utf8String(str)).get();
 		}
 		else transactionReceipt = contract.setString(adr, new Utf8String(str)).get();
+		this.gasCounter.addGas(transactionReceipt);
 		return CompletableFuture.completedFuture(transactionReceipt);
 	}
 

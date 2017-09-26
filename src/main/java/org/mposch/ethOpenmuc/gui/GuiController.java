@@ -47,6 +47,7 @@ private ContractTableModelRaw tableModelRaw;
 private ContractBean contractBean;
 @Autowired
 private RangeChecking transactionMonitor;
+@Autowired private GasCounter gasCounter;
 /**
  * 
  */
@@ -73,6 +74,7 @@ public GuiController(){
 		System.out.println("INIT GUI...");
 		mainWindow.initialize();
 		transactionMonitor.initialize();
+		gasCounter.initialize();
 		// Read the stored properties
 //		txtStorageLocation
 //		txtPrivateKey
