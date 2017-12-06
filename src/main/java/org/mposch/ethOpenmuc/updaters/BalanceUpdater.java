@@ -28,7 +28,8 @@ import rx.Subscription;
 
 /**
  * @author mposch
- *
+ * This component updates the Balance field, and calculates the Conversion Rate if necessary. 
+ * 
  */
 @Component
 public class BalanceUpdater implements Runnable {
@@ -46,7 +47,10 @@ public class BalanceUpdater implements Runnable {
 		// TODO Auto-generated constructor stub
 	}
 
-	
+	/**
+	 * The Run method is called periodically, to update the balance.
+	 * 
+	 */
 	@Override
 	public void run() {
 		Web3j web3j = blockChainProviderList.getWeb3j();
@@ -83,19 +87,23 @@ public class BalanceUpdater implements Runnable {
 
 	
 	/**
-	 * 
+	 * Updates the textfield of the main window
 	 */
 	public void updateTextField() {
 		double result;
 		result = balance.doubleValue()*this.currencyComboBoxModel.getCurrentRate();
 		mainWindow.getTxtBalance().setText(Double.toString(result));
 	}
-
+/**
+ * Stops the update timer.
+ */
 	public void stopUpdater() {
 
 		if (sheduler != null) sheduler.shutdown();
 	}
-
+/**
+ * Starts the update timer
+ */
 	public void sheduleUpdater() {
 		sheduler = Executors.newScheduledThreadPool(1);
 		sheduler.scheduleAtFixedRate(() -> {

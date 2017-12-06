@@ -59,11 +59,16 @@ public class RateUpdater implements Runnable {
 		
 		}
    }
-
+/**
+ * Stops the update timer for the Rate Updater
+ */
 	public void stopUpdater() {
 
 		if (sheduler != null) sheduler.shutdown();
 	}
+/**
+ * Starts the update timer for the rate
+ */
 	public void sheduleUpdater() {
 		sheduler = Executors.newScheduledThreadPool(1);
 		sheduler.scheduleAtFixedRate(() -> {

@@ -16,6 +16,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "error",
     "result"
 })
+/**
+ * Auto genterated Class from json2pojo.com. This tool can convert a Json output to Java class, tha can be marshalled using the fasterxml framework (or others). 
+ * 
+ */
 public class EthereumConversionRate {
 
     @JsonProperty("error")

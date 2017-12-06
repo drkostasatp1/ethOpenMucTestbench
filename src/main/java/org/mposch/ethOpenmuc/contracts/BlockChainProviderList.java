@@ -22,7 +22,9 @@ import org.web3j.protocol.ipc.UnixIpcService;
 
 /**
  * @author mposch
- *
+ * This class provides utillity methods to provide user selection of different Blockchain providers. The user can for example select a local Ethereum node, 
+ * or a remote Service like Infura.
+ * 
  */
 @Component
 public class BlockChainProviderList extends ArrayList<String> implements ComboBoxModel {
@@ -37,7 +39,6 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 	// private ArrayList<BcProvider> data;
 	public BlockChainProviderList() {
 		this.add("http://localhost:8545");
-		
 		this.add("https://ropsten.infura.io/cSOwB0UnVQUlOb7ycFS5");
 		String home = System.getProperty("user.home");
 		this.add(home + "/Library/Ethereum/rinkeby/geth.ipc");
@@ -69,7 +70,12 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 			return this.getWeb3j((String) mainWindow.getComboBoxBcProvider().getSelectedItem());
 		else return this.web3j;
 	}
-
+/**
+ * This method actually instanciates a Web3j instance, according to the url different versions of web3j will be created. 
+ * Additionally the gui elemets displaying the connection state will be updated
+ * @param url
+ * @return
+ */
 	public Web3j getWeb3j(String url) {
 		mainWindow.getTxtVersionInfo().setText("Not Connected");
 		if ((url == null) || (url.isEmpty()))
@@ -87,7 +93,6 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 			 web3j = Web3j.build(new UnixIpcService(url));
 		}
 		else
-
 		{
 			web3j = Web3j.build(new HttpService(url));
 		}
@@ -105,7 +110,10 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 		return web3j;
 
 	}
-
+/**
+ * Will return the Credentials, depending on user selection (Private key or Ehtereum Wallet file)
+ * @return
+ */
 	public Credentials getCredentials() {
 		Credentials retVal = null;
 		try

@@ -25,7 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This will pull channels from OpenMuc and put them into the ChannelState
+ * This will pull channels from OpenMuc and put them into the ChannelState.
+ * Performing this is easy by using the springframeworks integrated Rest template.
  * 
  * @author mposch
  *
@@ -155,12 +156,16 @@ public class OpenMucFetcher implements Runnable {
 	}
 
 	// Methods that control the periodic updater
-
+/**
+ * Stops the update timer
+ */
 	public void stopUpdater() {
 
 		if (sheduler != null) sheduler.shutdown();
 	}
-
+/**
+ * Start the update timer
+ */
 	public void sheduleUpdater() {
 		System.out.println("Start OpenMuc Updater scheduled..");
 		sheduler = Executors.newScheduledThreadPool(1);

@@ -29,7 +29,11 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.Contract;
-
+/**
+ * This class holds Configutarion Objects, that are used Globally.
+ * @author mposch
+ *
+ */
 @Configuration
 public class Config {
 
@@ -59,40 +63,5 @@ public class Config {
 		return theList;
 	}
 
-	// //@Bean
-	// OpenMucUpdater openMucUpdater(RestTemplate rt) throws Exception {
-	// OpenMucUpdater updater = new OpenMucUpdater();
-	// // THIS WILL START THE UPDATER THREAD, :: is a shortcut to the start
-	// // method as callable
-	// // The thread will be executed at a periodic rate
-	// final ScheduledExecutorService sheduler =
-	// Executors.newScheduledThreadPool(5);
-	// sheduler.scheduleAtFixedRate(() -> {
-	// try
-	// {
-	// // Start the updater Thread:
-	// updater.start();
-	//
-	// }
-	// catch (InterruptedException | ExecutionException e)
-	// {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }, 0, this.OPENMUCUPDATERATE, SECONDS);
-	// return updater;
-	// }
 
-	// /**
-	// * Create the Main Window
-	// *
-	// * @return
-	// */
-	// @Bean
-	// MainWindow mainWindow() {
-	// MainWindow window = null;
-	// window = new MainWindow();
-	// window.frame.setVisible(true);
-	// return window;
-	// }
 }

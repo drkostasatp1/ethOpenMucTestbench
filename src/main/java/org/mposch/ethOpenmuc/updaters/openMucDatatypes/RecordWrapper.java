@@ -13,7 +13,10 @@ public class RecordWrapper {
 	}
 @JsonProperty("record")
 public Record record;
-
+/**
+ * Returns the Json representation using the fasterxml Objectmapper. 
+ * @return
+ */
 public String toJsonString()
 {
 	String result = "";

@@ -25,7 +25,13 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+/**
+ * Performs regular updateby calling the smart contract and querying the stores parameter values. 
+ * Calling the contract is free and can therefore be perfomred regularly.
+ * 
+ * @author mposch
+ *
+ */
 @Component
 public class BlockChainFetcher implements Runnable {
 	@Autowired

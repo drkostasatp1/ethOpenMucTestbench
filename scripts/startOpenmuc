@@ -1,2 +1,3 @@
 #!/bin/bash
+# Debug: JVM_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y"
 ~/Documents/FH/MasterThesis_MatthiasPosch/java/openmuc/framework/bin/openmuc start -fg

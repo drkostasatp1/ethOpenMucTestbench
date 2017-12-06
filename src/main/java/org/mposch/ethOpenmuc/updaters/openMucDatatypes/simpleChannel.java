@@ -59,6 +59,9 @@ public class simpleChannel extends Channel {
 	public void setValue(double value) {
 		record.setValue(String.valueOf(value));
 	}
+	/**
+	 * Returns a JsonString by using the fasterxml object mapper
+	 */
 	@Override
 	public String toJsonString() throws JsonGenerationException, JsonMappingException, IOException {
 		{

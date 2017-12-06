@@ -15,6 +15,14 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 @Component
+/**
+ * This class will perform some tests on the contracts, if the user pressed the test button. 
+ * The class was used during development, but the tests are likely to fail on the final contract
+ * Be aware that after the test the contract will be empty!
+ * 
+ * @author mposch
+ *
+ */
 public class ContractTests {
 	@Autowired
 	private ContractBean	cb;

@@ -36,10 +36,15 @@ import ch.qos.logback.core.net.SyslogOutputStream;
 
 /**
  * This Class will represent the State of OpenMuc Channels (like a simple
- * cache). Persiodic updates can be merged into the state. The state provides a
+ * cache). Periodic updates can be merged into the state. The state provides a
  * means of deciding if a RecordEntry is new and needs to be updated and
  * transmitted to the Blockchain This can easily be decided by comparing the
- * Record Timesatmps, or if the record key is not present
+ * Record Timesatmps, or if the record key is not present. The Controller
+ * annotation (similar to the Component annotation) tells the Spring framework
+ * that this components shall be treated s controller. The Autowired annotation
+ * tells Spring that an instance of this Component is required (Singleton
+ * pattern)
+ * 
  * 
  * @author mposch
  */
@@ -58,27 +63,45 @@ public class ChannelState extends Observable {
 	private ArrayList<String>			indexes;
 
 	/**
-	 * 
+	 * The constructor, perform necessary initialisation.
 	 */
 	public ChannelState() {
 		this.data = new HashMap<String, Channel>();
-		this.indexes = new ArrayList();
+		// in order to provide a iterable hashmap with deterministic ordering,
+		// we need to make an index table
+		this.indexes = new ArrayList<String>();
 	}
 
+	/**
+	 * Will return true, if the given Channel value is not present or newer, in
+	 * order to trigger an update.
+	 * 
+	 * @param value
+	 * @return
+	 */
 	private boolean needsUpdate(Channel value) {
 		String key = getKey(value);
 		// System.out.println("Check update requirements for:" + key);
 		Channel stored = data.get(key);
-
 		if (stored == null) return true;
 		if ((stored.getRecord().getTimestamp()) < (value.getRecord().getTimestamp())) return true;
 		return false;
 	}
 
+	/**
+	 * Return the Channel object at the specified index.
+	 * 
+	 * @param index
+	 * @return The Channel object at the specified index
+	 */
 	public Channel getChannelAtIndex(int index) {
 		return this.data.get(indexes.get(index));
 	}
 
+	/**
+	 * Delete all data from the channel state by performing clear() on all
+	 * tables.
+	 */
 	public void clear() {
 		this.data.clear();
 		this.indexes.clear();
@@ -97,7 +120,6 @@ public class ChannelState extends Observable {
 		// Only if the string key is not present, add a new index.
 		if (this.data.containsKey(key))
 		{
-
 			// THE VALUE IS ALREADY PRESENT, UPDATE THE CHANNEL STATE
 			Channel update;
 			// Update Timestamp and Value
@@ -113,7 +135,6 @@ public class ChannelState extends Observable {
 				// Set the Timestamp
 				update.getRecord().setTimestamp(value.getRecord().getTimestamp());
 				// Leave the other fields alone!
-
 				// UPDATE THE TABLE
 				int firstRow = indexes.indexOf(key);
 				int lastRow = firstRow;
@@ -123,7 +144,7 @@ public class ChannelState extends Observable {
 		}
 		else
 		{
-			// INSERT A NEW VALUE
+			// CHANNEL OBJECT NOT PRESENT, INSERT A NEW VALUE
 			// Add a totally new Value, with a new index so the Hashmap is
 			// iterable.
 			this.indexes.add(key);
@@ -131,12 +152,12 @@ public class ChannelState extends Observable {
 		}
 		return indexes.indexOf(key);
 	}
-
-	private String getKey(Channel value) {
-		String key = value.getSource() + "." + value.getId();
-		return key;
-	}
-
+/**
+ * This method will post all Channels of the channel state on the Blockchain, by issuing transactions using a helper method. 
+ * Only CHannels that are in the "READY" state will be transmitted
+ * @author mposch
+ * 
+ */
 	public synchronized void postAllOnBlockChain() {
 
 		Set channels = this.data.entrySet();
@@ -148,9 +169,9 @@ public class ChannelState extends Observable {
 			try
 			{
 				Int256 tmp256;
-				Double tmpDouble = new Double (c.getRecord().getValue());
+				Double tmpDouble = new Double(c.getRecord().getValue());
 				long tmpLong = Math.round(tmpDouble.doubleValue());
-				
+
 				tmp256 = new Int256(tmpLong);
 				Int256 retVal;
 				retVal = contractBean.getContract().getBoundedValue(tmp256).get();
@@ -165,8 +186,11 @@ public class ChannelState extends Observable {
 	}
 
 	/**
-	 * THis will post a value onto the blockchain, if it is ready to broadcast
-	 * and not in a pending state.
+	 * This will post a value onto the blockchain, if it is ready to broadcast
+	 * and not in a pending state. The transaction is wrapped into a
+	 * completeablt future, therefore a background thread is dispatched and the
+	 * method is non-blocking, which is important due to the high transaction
+	 * times on ethereum.
 	 * 
 	 * @param c
 	 */
@@ -175,8 +199,9 @@ public class ChannelState extends Observable {
 		CompletableFuture.supplyAsync(() -> {
 			try
 			{
-				System.out.println("ChannelState.postChannelOnBlockchain(): " + c.getId() + "Channel State"
-						+ c.getBlockchainStatus());
+				// System.out.println("ChannelState.postChannelOnBlockchain(): "
+				// + c.getId() + "Channel State"
+				// + c.getBlockchainStatus());
 				c.setBlockchainStatus("PENDING");
 				tableModelChannelState.fireTableDataChanged();
 				Address adr = generateAddress(c);
@@ -214,13 +239,13 @@ public class ChannelState extends Observable {
 
 	}
 
-	// This could be a starting point to fire the table update, but i want
-	// to update the table only if blockchain events occur
-	//
-
 	/**
 	 * This method will take a channel and generate an apropirate storage
-	 * address for it, based on the Channel id.
+	 * address for it, based on the Channel id. Basicly this function acts like
+	 * a hash function. TODO: Figure out why the calculation fails sometimes.
+	 * Sometimes, based on the input of the hash function, the calcualation
+	 * failes. If that happens, the standard java hash function is applied.
+	 * 
 	 * 
 	 * @param c
 	 * @return
@@ -245,7 +270,6 @@ public class ChannelState extends Observable {
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			gui.Error("Hash Calculation failed" + e.getMessage());
 			String hashString = Integer.toHexString(c.getId().hashCode());
 			Address adr = new Address(hashString);
@@ -254,6 +278,11 @@ public class ChannelState extends Observable {
 
 	}
 
+	/**
+	 * Rteurns an ArrayList of all Channel ID Strings
+	 * 
+	 * @return An ArrayList of all Channel ID Strings
+	 */
 	public ArrayList<String> getAllId() {
 		ArrayList<String> retVal = new ArrayList();
 		for (int i = 0; i < this.getSize(); i++)
@@ -263,14 +292,41 @@ public class ChannelState extends Observable {
 		return retVal;
 	}
 
+	/**
+	 * Returns a Combination of ID and Source (Blockchain, OpenMuc or Editor at
+	 * the moment). This values could be used to uniquely identify a channel
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private String getKey(Channel value) {
+		String key = value.getSource() + "." + value.getId();
+		return key;
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @return The corresponding Channel Object
+	 */
 	public Channel get(String key) {
 		return this.data.get(key);
 	}
+
+	/**
+	 * 
+	 * @return The size of the data array.
+	 */
 
 	public int getSize() {
 		return this.data.size();
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @return True, if the data hashtable contains the given key.
+	 */
 	public boolean contains(String key) {
 		return this.data.containsKey(key);
 	}

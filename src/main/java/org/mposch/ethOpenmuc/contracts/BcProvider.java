@@ -4,7 +4,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 
 /**
- * 
+ * This Class represents a Blockchain Provider, wrapping an instance of the web3j framework
  * @author mposch
  *
  */

@@ -40,9 +40,16 @@ import rx.Subscription;
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
+/**
+ * The Application Class is the main class of the application. 
+ * It contains a main method, that in turn creates a new Spring application. 
+ * Spring manages the lifetime of all objects in this code.
+ * 
+ * @author mposch
+ *
+ */
 public class Application {
 	// No additional configuration is required
-	// if you want to connect via HTTP to the default URL http://localhost:8545.
 	@Autowired
 	GuiController					gui;
 	@Autowired
@@ -58,13 +65,21 @@ public class Application {
 	private CurrencyComboBoxModel currencyComboBoxModel;
 	@Autowired
 	private RateUpdater rateUpdater;
-	
+	/**
+	 * The main method creates a new Spring application. In order to use a gui, the headless option has to be passed as well.
+	 * @param args
+	 */
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(Application.class).headless(false).web(false).run(args);
 	}
 
-	//7 Customize the Spring threadPool
+	/**
+	 * Spring uses Beans to manage the Lifetime of an Objects. Beans are Created and destroyed by the Spring framework. 
+	 * The annotation @Bean tell the framework that the following method should be identified as Bean. 
+	 * This Bean customises the Spring thread executor pool.
+	 * @return
+	 */
 	@Bean
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -75,7 +90,12 @@ public class Application {
         executor.initialize();
         return executor;
     }
-	
+	/**
+	 * This bean is executed after the framework initialisation, and is used to call gui initialisation, 
+	 * and to created the regular sheduler tasks required. 
+	 * @return
+	 * @throws Exception
+	 */
 	@Bean
 	public CommandLineRunner run() throws Exception {
 
@@ -84,31 +104,17 @@ public class Application {
 			gui.initGui();
 			gui.updateGui();
 			
-			
 			// Setup the walletfile
 			// mainWindow.getTextFieldWalletFile().setText("/Volumes/UserData/mposch/Documents/FH/MasterThesis_MatthiasPosch/java/MT_Experiment4/walletFile");
 			// Setup the passwd
 			// mainWindow.getPwdWalletPassword().setText("qaywsxedc");
 			// For Development, setup the gui fields
 			// mainWindow.getTxtPrivateKey().setText("8ec4182356fcdc854d65ee86421190310102dc4219addf3de1229c4c2cb873b3");
-
 			// Setup Observers
 			channelState.addObserver(tableModelChannelState);
-
 			balanceUpdater.sheduleUpdater();
 			rateUpdater.sheduleUpdater();
-			
 			gui.Success("Application Initialized");
-			// Web3j w;
-			// w = blockChainProviderList.getWeb3j();
-			// Subscription subscription1 =
-			// w.ethPendingTransactionHashObservable().subscribe(
-			// tx -> {
-			// System.out.println("Transaction PendingHasObservable Rceived -
-			// Hash: " +tx);
-			// });
-
-			// Test a simple channel json
 			
 		};
 

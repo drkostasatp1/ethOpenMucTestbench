@@ -6,7 +6,8 @@
  CONTRACT ADDRESS
  
  0xa58a3e890094b809527fe4a3ec0ebfd057eafc98
- 
+ 0x6fc020b50d0e87344b52a7dc455ca449146e4e92
+
  
 > personal.newAccount("qaywsxedc")
 "0x6dd5aa86b7707857e8fd2fb104a4261fc184b10a"
