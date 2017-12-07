@@ -6,6 +6,10 @@
 # Ignore Gradle GUI config
 gradle-app.setting
 
+# Solidity Binaries and ABI
+*.bin
+*.abi
+
 # Compiled source #
 ###################
 *.com
