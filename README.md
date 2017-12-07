@@ -14,5 +14,5 @@ git clone https://github.com/mposch/ethOpenMucTestbench.git
 
 Download dependencies, compile and Run the Code using gradle:
 
-cd ethOpenMucTestbench
+cd ethOpenMucTestbench &&
 ./gradlew bootRun
