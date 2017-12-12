@@ -40,6 +40,8 @@ And then use the clone command in a terminal window to download the Project. the
 ```
 git clone https://github.com/mposch/ethOpenMucTestbench.git
 ```
+If you do not want to install git, you can just download the master zip file from github: https://github.com/mposch/ethOpenMucTestbench/archive/master.zip
+
 To actually run the software just type
 ```
 cd ethOpenMucTestbence
