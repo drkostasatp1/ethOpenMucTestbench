@@ -1,21 +1,27 @@
-# Installing the EthTestbench on a Windows machine, step by step
-Requirements: Java JRE, Git, OpenMuc
+# Installing the EthTestbench on a Windows machine, step by step Quick Start Guide
+Requirements: Java JRE, (Git), OpenMuc
 
 ## Install a Java JRE
  
 Your system must be configured to host a Java JRE Environment. 
  
-## Install the Ethereum Wallet
-Download the Ethereum Wallet from https://github.com/ethereum/mist/releases
 
-The version used wihin this guide is 0.9.3, available from https://github.com/ethereum/mist/releases/download/v0.9.3/Ethereum-Wallet-installer-0-9-3.exe
 
-1) Run the Ethereum Installer, run the application. 
+## Install Geth for Windows
 
-To use one of the testnets choose a Testnet, in this guide i choose the ropsten testnetwork. 
-Let the Blockchain sync for a while, this can take quite some time. 
+Download the installer at https://geth.ethereum.org/downloads/
+I this guide i used version 1.7.3
 
-While the Blockchain syncs, install the other requirements
+Once the installer is finished , open a command window. The first step is to create an account using the geth commandline tool:
+```
+geth --testnet account new
+```
+The programm will ask for a password (which is used to encrypt the provate keys which are stored in the keyfile). Afterwards the ethereum blockchain can be executed again using following options
+```
+geth --testnet --mine --rpc --syncmode "light"
+```
+This will start the Ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while
+
 
 ## Install Openmuc
 
@@ -44,7 +50,8 @@ If you do not want to install git, you can just download the master zip file fro
 
 To actually run the software just type
 ```
-cd ethOpenMucTestbence
+cd ethOpenMucTestbench
 gradlew.bat bootRun
 ```
+
 
