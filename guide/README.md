@@ -1,9 +1,10 @@
 # Installing the EthTestbench on a Windows machine, step by step Quick Start Guide
 Requirements: Java JRE, (Git), OpenMuc
 
-## Install a Java JRE
+## Install a Java JDK
  
-Your system must be configured to host a Java JRE Environment. 
+Your system must be configured to host a Java JRE Environment and the Java JDK must be available to compile the source. 
+I tested the commande using JDK Update 151. 
  
 
 
