@@ -87,5 +87,16 @@ To actually run the software just type
 cd ethOpenMucTestbench
 gradlew.bat bootRun
 ```
+## Selecting the Keyfile
 
+These can be found at these locations:
+Accounts
+
+    Mac: ~/Library/Ethereum/keystore
+
+    Linux: ~/.ethereum/keystore
+
+    Windows: %APPDATA%/Ethereum/keystore
+
+The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
 
