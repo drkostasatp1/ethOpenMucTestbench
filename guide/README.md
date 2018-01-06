@@ -8,29 +8,27 @@ Your system must be configured to host a Java JRE Environment and the Java JDK m
 I tested the commande using JDK Update 151. 
 
  
-
-
 ## Install Geth for Windows
 
 Download the installer at https://geth.ethereum.org/downloads/
 I this guide i used version 1.7.3
 
-Once the installer is finished , open a command window. The first step is to create an account using the geth commandline tool:
-```
+Once the installer is finished , open a command window. The first step is to create an account using the commandline tool:
+``
 geth --testnet account new
-```
-The programm will ask for a password (which is used to encrypt the provate keys which are stored in the keyfile). A wallet file will be created at the default Ethereum location (
+``
+The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile). A wallet file will be created at the default Ethereum location. 
 
- Afterwards the ethereum blockchain can be executed again using following options
+ Afterwards, to start the ethereum node,  geth can be executed again using following options
 ```
 geth --testnet --mine --rpc --syncmode "fast"
 ```
-This will start the Ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while. 
+This will start the ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while. It will take some time for the ethereum node to sync with the test network
 
 In another terminal window, verify that geth is running correctly. 
-```
+``
 geth attach
-```
+``
 Will open a shell connection to the already running Ethereum Node. The Output should look similar to his:
 ```
 C:\Users\Matthias Posch>geth attach
@@ -106,6 +104,8 @@ Accounts
     Windows: %APPDATA%/Ethereum/keystore
 
 The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
+To access the keyfile it might be necessary to allow the Explorer to view hidden files and folders. For the test network it is necessary to locate the keyfile in the testnet folder. 
+
 
 
 
