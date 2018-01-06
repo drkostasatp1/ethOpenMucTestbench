@@ -3,7 +3,10 @@ Requirements: Java JRE, (Git), OpenMuc
 
 ## Install a Java JDK
  
-Your system must be configured to host a Java JDK Software Development Kit to compile the Projetc (Java 8). 
+
+Your system must be configured to host a Java JRE Environment and the Java JDK must be available to compile the source. 
+I tested the commande using JDK Update 151. 
+
  
 
 
@@ -89,5 +92,16 @@ To actually run the software just type
 cd ethOpenMucTestbench
 gradlew.bat bootRun
 ```
+## Selecting the Keyfile
 
+These can be found at these locations:
+Accounts
+
+    Mac: ~/Library/Ethereum/keystore
+
+    Linux: ~/.ethereum/keystore
+
+    Windows: %APPDATA%/Ethereum/keystore
+
+The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
 
