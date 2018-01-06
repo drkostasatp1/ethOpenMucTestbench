@@ -92,6 +92,8 @@ To actually run the software just type
 cd ethOpenMucTestbench
 gradlew.bat bootRun
 ```
+This will download all dependencies, compile the source code, start the spring framework and launch the application. 
+
 ## Selecting the Keyfile
 
 These can be found at these locations:
@@ -104,4 +106,6 @@ Accounts
     Windows: %APPDATA%/Ethereum/keystore
 
 The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
+
+
 
