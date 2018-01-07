@@ -19,6 +19,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.protocol.infura.InfuraHttpService;
 import org.web3j.protocol.ipc.UnixIpcService;
+import org.web3j.tx.ChainId;
 
 /**
  * @author mposch
@@ -34,16 +35,17 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 	private GuiController	guiController;
 	private Web3j			web3j;
 	private String			lastConnectionEndpoint;
+	private String 			netVersion;
 	String					selection	= null;
 
 	// private ArrayList<BcProvider> data;
 	public BlockChainProviderList() {
 		this.add("http://localhost:8545");
-		this.add("https://ropsten.infura.io/cSOwB0UnVQUlOb7ycFS5");
-		String home = System.getProperty("user.home");
-		this.add(home + "/Library/Ethereum/rinkeby/geth.ipc");
-		this.add(home +"/Library/Ethereum/testnet/geth.ipc");
-		this.add(home +"/Library/Ethereum/geth.ipc");
+	//	this.add("https://ropsten.infura.io/cSOwB0UnVQUlOb7ycFS5");
+	//	String home = System.getProperty("user.home");
+	//	this.add(home + "/Library/Ethereum/rinkeby/geth.ipc");
+	//	this.add(home +"/Library/Ethereum/testnet/geth.ipc");
+	//	this.add(home +"/Library/Ethereum/geth.ipc");
 	}
 /**
  * This metod will return a fresh web3j instance in any case.
@@ -103,7 +105,13 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 			clientVersion = x.getWeb3ClientVersion();
 			mainWindow.getTxtVersionInfo().setText(clientVersion);
 		});
-
+		// Async call to get the net Version
+		web3j.netVersion().observable().subscribe(
+				x -> {
+					this.netVersion = x.getNetVersion();
+				}
+				);
+		
 		this.guiController.Success("Connected to Ethereum Node");
 		if (web3j == null) guiController.Error("Could not Connect to Ethereum Node");
 		this.lastConnectionEndpoint = url;
@@ -173,6 +181,9 @@ public class BlockChainProviderList extends ArrayList<String> implements ComboBo
 	public Object getSelectedItem() {
 		return selection;
 
+	}
+	public String getNetVersion() {
+		return netVersion;
 	}
 
 	/**

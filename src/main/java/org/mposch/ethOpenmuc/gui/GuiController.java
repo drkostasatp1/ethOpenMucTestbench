@@ -81,16 +81,18 @@ public GuiController(){
 //		pwdWalletPassword
 //		textFieldWalletFile
 //		comboBoxBcProvider (selecet)
-		Preferences p = Preferences.userNodeForPackage(MainWindow.class);
+		Preferences preferences = Preferences.userNodeForPackage(MainWindow.class);
 		
-		mainWindow.getTxtStorageLocation().setText(p.get("txtStorageLocation", "0x333aa92cd8ded6b27bafe6e2f1b9ab272a74b614"));
-		mainWindow.getTxtPrivateKey().setText(p.get("txtPrivateKey", "8ec4182356fcdc854d65ee86421190310102dc4219addf3de1229c4c2cb873b3"));
-		mainWindow.getPwdWalletPassword().setText(p.get("pwdWalletPassword", "qaywsxedc"));
+		mainWindow.getTxtStorageLocation().setText(preferences.get("txtStorageLocation", "0x0"));
+		mainWindow.getTxtPrivateKey().setText(preferences.get("txtPrivateKey", "0"));
+		mainWindow.getPwdWalletPassword().setText(preferences.get("pwdWalletPassword", ""));
 	
-		mainWindow.getTextFieldWalletFile().setText(p.get("textFieldWalletFile", "/Volumes/UserData/mposch/Library/Ethereum/testnet/keystore/testnet"));
+		mainWindow.getTextFieldWalletFile().setText(preferences.get("textFieldWalletDir", "") + preferences.get("textFieldWalletFileName", ""));
 		
-		mainWindow.getComboBoxBcProvider().setSelectedIndex(p.getInt("comboBoxBcProvider", 0));
-		mainWindow.getLblAccountPrivateKey().setSelected(p.getBoolean("lblAccountPrivateKey", false));
+		
+		
+		mainWindow.getComboBoxBcProvider().setSelectedIndex(preferences.getInt("comboBoxBcProvider", 0));
+		mainWindow.getLblAccountPrivateKey().setSelected(preferences.getBoolean("lblAccountPrivateKey", false));
 	}
 	
 	

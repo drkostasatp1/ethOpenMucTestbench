@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URI;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
@@ -105,6 +106,7 @@ public class MainWindow {
 	private JButton					buttonDeleteAll;
 	private JComboBox<String>		comboBoxCurrencySelector;
 	private JCheckBox				checkBoxSimpleChannel;
+	private Preferences				preferences	= Preferences.userNodeForPackage(MainWindow.class);
 
 	/**
 	 * Create the application.
@@ -120,7 +122,10 @@ public class MainWindow {
 	 */
 
 	public void initialize() {
-		Preferences p = Preferences.userNodeForPackage(MainWindow.class);
+	//	Preferences p = Preferences.userNodeForPackage(MainWindow.class);
+		// SETUP DATA FROM PREFERENCES
+		
+		
 		frame = new JFrame();
 
 		frame.setResizable(false);
@@ -137,7 +142,7 @@ public class MainWindow {
 		comboBoxBcProvider.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				p.putInt("comboBoxBcProvider", comboBoxBcProvider.getSelectedIndex());
+				preferences.putInt("comboBoxBcProvider", comboBoxBcProvider.getSelectedIndex());
 			}
 		});
 
@@ -157,7 +162,7 @@ public class MainWindow {
 		txtStorageLocation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				p.put("txtStorageLocation", txtStorageLocation.getText());
+				preferences.put("txtStorageLocation", txtStorageLocation.getText());
 			}
 		});
 
@@ -196,7 +201,7 @@ public class MainWindow {
 		lblAccountPrivateKey.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				p.putBoolean("lblAccountPrivateKey", lblAccountPrivateKey.isSelected());
+				preferences.putBoolean("lblAccountPrivateKey", lblAccountPrivateKey.isSelected());
 			}
 		});
 
@@ -209,7 +214,7 @@ public class MainWindow {
 		txtPrivateKey.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				p.put("txtPrivateKey", txtPrivateKey.getText());
+				preferences.put("txtPrivateKey", txtPrivateKey.getText());
 			}
 		});
 
@@ -256,7 +261,7 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("MainWindow.initialize().new ActionListener() WalletFIle.actionPerformed()");
-				p.put("textFieldWalletFile", textFieldWalletFile.getText());
+				preferences.put("textFieldWalletFile", textFieldWalletFile.getText());
 			}
 		});
 
@@ -269,7 +274,7 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String pwd = new String(pwdWalletPassword.getPassword());
-				p.put("pwdWalletPassword", pwd);
+				preferences.put("pwdWalletPassword", pwd);
 				pwd = "";
 			}
 		});
@@ -414,11 +419,11 @@ public class MainWindow {
 				Channel ch;
 				if (checkBoxSimpleChannel.isSelected())
 				{
-					 ch = new simpleChannel();
+					ch = new simpleChannel();
 				}
 				else
 				{
-					 ch = new Channel();
+					ch = new Channel();
 				}
 				ch.setId(s);
 				ch.setSource("EDITOR");
@@ -439,12 +444,11 @@ public class MainWindow {
 		buttonChooseFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				FileDialog fd = new FileDialog(frame, "Choose a wallet file", FileDialog.LOAD);
-				fd.setDirectory("~/Library/Ethereum");
+				fd.setDirectory(preferences.get("textFieldWalletDir", ""));
 				fd.setVisible(true);
-
-				String filename = fd.getDirectory() + fd.getFile();
-
-				textFieldWalletFile.setText(filename);
+				preferences.put("textFieldWalletFileName", fd.getFile());
+				preferences.put("textFieldWalletDir", fd.getDirectory());
+				textFieldWalletFile.setText(preferences.get("textFieldWalletDir", "") + preferences.get("textFieldWalletFileName", ""));
 			}
 		});
 		frame.getContentPane().add(buttonChooseFile);
@@ -473,11 +477,29 @@ public class MainWindow {
 		JButton buttonDisplayEtherScan = new JButton("EtherScan");
 		buttonDisplayEtherScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+// TODO Check version of network (Test, Rinkeby, Main) and display different version of the block explorer
+				String etherScanUrl = "";
+				
+				byte version;
+				try{
+				
+				version = Byte.valueOf(blockChainProviderList.getNetVersion());
+				} catch (NumberFormatException nfe)
+				{
+					version = org.web3j.tx.ChainId.NONE;
+					etherScanUrl = "https://etherscan.io/address/";
+				}
+				
+				if ( version ==  org.web3j.tx.ChainId.MAIN_NET ) etherScanUrl = "https://etherscan.io/address/";
+				else
+				if ( version ==  org.web3j.tx.ChainId.RINKEBY ) etherScanUrl = "https://rinkeby.etherscan.io/address/";
+				else
+				if ( version ==  org.web3j.tx.ChainId.TEST_NET ) etherScanUrl = "https://ropsten.etherscan.io/address/";
+				else
+				if ( version ==  org.web3j.tx.ChainId.KOVAN ) etherScanUrl = "https://kovan.etherscan.io/address/";
 				try
 				{
-					URI uri = new URI("https://rinkeby.etherscan.io/address/" + txtStorageLocation.getText());
-
+					URI uri = new URI(etherScanUrl + txtStorageLocation.getText());
 					Desktop.getDesktop().browse(uri);
 				}
 				catch (Exception ex)
@@ -508,7 +530,6 @@ public class MainWindow {
 		comboBoxCurrencySelector.setBounds(1113, 51, 77, 27);
 		comboBoxCurrencySelector.setModel(currencyComboBoxModel);
 		frame.getContentPane().add(comboBoxCurrencySelector);
-
 		checkBoxSimpleChannel = new JCheckBox("Use Simple Storage");
 		checkBoxSimpleChannel.setSelected(true);
 		checkBoxSimpleChannel.setBounds(415, 213, 199, 23);
