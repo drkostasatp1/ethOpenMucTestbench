@@ -5,23 +5,24 @@ Requirements: Java JRE, (Git), OpenMuc
  
 
 Your system must be configured to host a Java JRE Environment and the Java JDK must be available to compile the source. 
-I tested the commande using JDK Update 151. 
+I tested the commands in thei guide using JDK Update 151. 
 
  
 ## Install Geth for Windows
 
 Download the installer at https://geth.ethereum.org/downloads/
-I this guide i used version 1.7.3
+I this guide i used version 1.7.3. 
 
-Once the installer is finished , open a command window. The first step is to create an account using the commandline tool:
+Once the installer is finished , open a terminal window. The first step is to create an account using the commandline tool:
 
 	geth --testnet account new
 
-The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile). A wallet file will be created at the default Ethereum location. 
+The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile. This password also has to be entered in the gui of the Programm in order to unlock the private keys). A wallet file will be created at the default Ethereum location (see below for specific locations)
 
  Afterwards, to start the ethereum node,  geth can be executed again using following options
 
 	geth --testnet --mine --rpc --syncmode "fast"
+
 
 This will start the ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while, when ste process is started for the first time let it work for approximately 30 minutes. It will take some time for the ethereum node to sync with the test network and perform mining operations. 
 
@@ -29,7 +30,7 @@ In another terminal window, verify that geth is running correctly:
 
 	geth attach
 
-Will open a shell connection to the already running Ethereum Node. The Output should look similar to his:
+This will open a shell connection to the already running Ethereum Node. The Output should look similar to his:
 ```
 C:\Users\Matthias Posch>geth attach
 Welcome to the Geth JavaScript console!
