@@ -106,6 +106,9 @@ To access the keyfile it might be necessary to allow the Explorer to view hidden
 
 After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet. Below is a screenshot how the setup could look like: 
 
-![](TerminalWindow.png)
+![](TerminalWindows.png)
 
+After that, the running Project should look like this:
+
+![](testBenchRunning)
 
