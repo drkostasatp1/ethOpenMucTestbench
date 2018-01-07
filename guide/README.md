@@ -10,14 +10,14 @@ I tested the commands in thei guide using JDK Update 151.
  
 ## Install Geth for Windows
 
-Download the installer at https://geth.ethereum.org/downloads/
-I this guide i used version 1.7.3. 
+Download and execute the [installer](https://geth.ethereum.org/downloads/)
+For this guide i used version 1.7.3. 
 
 Once the installer is finished , open a terminal window. The first step is to create an account using the commandline tool:
 
 	geth --testnet account new
 
-The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile. This password also has to be entered in the gui of the Programm in order to unlock the private keys). A wallet file will be created at the default Ethereum location (see below for specific locations)
+The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile. This password also has to be entered in the gui of the Programm in order to unlock the private keys). A wallet file will be created at the default Ethereum location (see below for specific locations depending on the operating system) 
 
  Afterwards, to start the ethereum node,  geth can be executed again using following options
 
