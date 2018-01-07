@@ -97,6 +97,14 @@ To actually run the software just type
 
 This will download all dependencies, compile the source code, start the spring framework and launch the application. 
 
+After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet. Below is a screenshot how the setup could look like: 
+
+![](TerminalWindows.png)
+
+After that, the running Project should look like this and everything is setup to create the first Storage contract.
+
+![](testBenchRunning.png)
+
 ## Selecting the Keyfile
 
 These can be found at these locations:
@@ -107,13 +115,8 @@ Accounts
 	Windows: %APPDATA%/Ethereum/keystore
 
 The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correctly. 
-To access the keyfile it might be necessary to allow the Explorer to view hidden files and folders. For the test network it is necessary to locate the keyfile in the testnet folder. 
+To access the keyfile it might be necessary to allow the Explorer to view hidden files and folders. For the test network it is necessary to locate the keyfile in the testnet folder. Once the keyfile has been selected and the correct password enterd, the applicaiton should display a ethereum balance (different from zero). This process is s a sheduled background task, so it might not happen immideatly. Also, if the proof of work process did not produce any results, the accounts balance might also be zero. 
 
-After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet. Below is a screenshot how the setup could look like: 
 
-![](TerminalWindows.png)
 
-After that, the running Project should look like this and everything is setup to create the first Storage contract.
-
-![](testBenchRunning.png)
 
