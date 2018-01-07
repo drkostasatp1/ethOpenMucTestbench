@@ -14,9 +14,9 @@ Download the installer at https://geth.ethereum.org/downloads/
 I this guide i used version 1.7.3
 
 Once the installer is finished , open a command window. The first step is to create an account using the commandline tool:
-``
-geth --testnet account new
-``
+
+	geth --testnet account new
+
 The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile). A wallet file will be created at the default Ethereum location. 
 
  Afterwards, to start the ethereum node,  geth can be executed again using following options
@@ -30,7 +30,7 @@ In another terminal window, verify that geth is running correctly:
 	geth attach
 
 Will open a shell connection to the already running Ethereum Node. The Output should look similar to his:
-
+```
 C:\Users\Matthias Posch>geth attach
 Welcome to the Geth JavaScript console!
 
@@ -41,7 +41,7 @@ at block: 51966 (Sun, 27 Nov 2016 17:30:18 CET)
  modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txp
 ool:1.0 web3:1.0
 >
-
+```
 There are a number of commands that can be used to interact with the blockchain. Most of these functions can also be accessed using the Ethereum wallet or the Ethereum Mist Browser, which both use the geth process internally. The shell can be used to check the state of the Network:
 ```
 > personal.listAccounts
