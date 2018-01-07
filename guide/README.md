@@ -20,17 +20,17 @@ geth --testnet account new
 The programm will ask for a password (which is used to encrypt the private keys which are stored in the keyfile). A wallet file will be created at the default Ethereum location. 
 
  Afterwards, to start the ethereum node,  geth can be executed again using following options
-```
-geth --testnet --mine --rpc --syncmode "fast"
-```
-This will start the ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while. It will take some time for the ethereum node to sync with the test network
 
-In another terminal window, verify that geth is running correctly. 
-``
-geth attach
-``
+	geth --testnet --mine --rpc --syncmode "fast"
+
+This will start the ethereum blockchain node, with mining enabled in order to be able to perform transactions. The sync process will take a while, when ste process is started for the first time let it work for approximately 30 minutes. It will take some time for the ethereum node to sync with the test network and perform mining operations. 
+
+In another terminal window, verify that geth is running correctly:
+
+	geth attach
+
 Will open a shell connection to the already running Ethereum Node. The Output should look similar to his:
-```
+
 C:\Users\Matthias Posch>geth attach
 Welcome to the Geth JavaScript console!
 
@@ -41,7 +41,7 @@ at block: 51966 (Sun, 27 Nov 2016 17:30:18 CET)
  modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txp
 ool:1.0 web3:1.0
 >
-```
+
 There are a number of commands that can be used to interact with the blockchain. Most of these functions can also be accessed using the Ethereum wallet or the Ethereum Mist Browser, which both use the geth process internally. The shell can be used to check the state of the Network:
 ```
 > personal.listAccounts
@@ -55,7 +55,7 @@ There are a number of commands that can be used to interact with the blockchain.
 > net.listening
 true
 >
-```
+
 
 
 ## Install Openmuc
@@ -64,9 +64,9 @@ Download the latest Version of Openmuc from https://www.openmuc.org/openmuc/down
 In this guide i will use version 0.16.0.
 
 2) Unpack the downloaded archive, and use a terminal session to launch the openmuc demo using 
-```
-openmuc.bat -fg
-```
+
+	openmuc.bat -fg
+
 This script is located in the framework/bin directory
 
 as described in the OpenMuc [quick start guide](https://www.openmuc.org/openmuc/user-guide/#_quick_start). 
@@ -80,16 +80,16 @@ It is easy to verify that openMuc is running by visiting the webpage that will b
 I would recommend to use git to checkout the latest version of the repository. To install git for windows just download the latest version at (http://msysgit.github.io)
 
 And then use the clone command in a terminal window to download the Project. The project will be downloaded wherever to the current directoriy of the shell. 
-```
-git clone https://github.com/mposch/ethOpenMucTestbench.git
-```
+	
+	git clone https://github.com/mposch/ethOpenMucTestbench.git
+
 If you do not want to install git, you can just download the master zip file from github: https://github.com/mposch/ethOpenMucTestbench/archive/master.zip
 
 To actually run the software just type
-```
-cd ethOpenMucTestbench
-gradlew.bat bootRun
-```
+
+	cd ethOpenMucTestbench
+	gradlew.bat bootRun
+
 This will download all dependencies, compile the source code, start the spring framework and launch the application. 
 
 ## Selecting the Keyfile
@@ -98,15 +98,14 @@ These can be found at these locations:
 Accounts
 
     Mac: ~/Library/Ethereum/keystore
-
     Linux: ~/.ethereum/keystore
+	Windows: %APPDATA%/Ethereum/keystore
 
-    Windows: %APPDATA%/Ethereum/keystore
-
-The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
+The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correctly. 
 To access the keyfile it might be necessary to allow the Explorer to view hidden files and folders. For the test network it is necessary to locate the keyfile in the testnet folder. 
 
-After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet.
+After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet. Below is a screenshot how the setup could look like: 
 
+![](TerminalWindow.png)
 
 
