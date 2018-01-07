@@ -108,7 +108,7 @@ After this initial steps the demo should be ready to connect to OpenMuc and the 
 
 ![](TerminalWindows.png)
 
-After that, the running Project should look like this:
+After that, the running Project should look like this and everything is setup to create the first Storage contract.
 
 ![](testBenchRunning.png)
 
