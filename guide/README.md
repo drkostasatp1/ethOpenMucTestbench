@@ -79,7 +79,7 @@ It is easy to verify that openMuc is running by visiting the webpage that will b
 
 I would recommend to use git to checkout the latest version of the repository. To install git for windows just download the latest version at (http://msysgit.github.io)
 
-And then use the clone command in a terminal window to download the Project. the project will be downloaded wherever to the current directoriy of the shell. 
+And then use the clone command in a terminal window to download the Project. The project will be downloaded wherever to the current directoriy of the shell. 
 ```
 git clone https://github.com/mposch/ethOpenMucTestbench.git
 ```
@@ -106,6 +106,7 @@ Accounts
 The Projects needs the keyfiles to access the Private keys of an account, in order to sign transactions correct. 
 To access the keyfile it might be necessary to allow the Explorer to view hidden files and folders. For the test network it is necessary to locate the keyfile in the testnet folder. 
 
+After this initial steps the demo should be ready to connect to OpenMuc and the Ethereum Testnet.
 
 
 
