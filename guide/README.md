@@ -56,7 +56,7 @@ There are a number of commands that can be used to interact with the blockchain.
 true
 >
 
-
+```
 
 ## Install Openmuc
 
