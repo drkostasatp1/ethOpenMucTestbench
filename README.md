@@ -2,7 +2,10 @@
 ## Requirements
 
 A Java Runtime Environment.
-A Blockchain node running locally. This could be the Ethereum Wallet, the Mist Ethereum Browser or the commandline version of geth. 
+A Blockchain node running locally. This could be the Ethereum Wallet, the Mist Ethereum Browser or the commandline 
+version of geth. 
+
+See the [guide section](guide/README.md) for setp by step instructions (performed on a windows machine, but for linux and mac os the required steps are similar)
 
 ## Compiling and Executing the code
 

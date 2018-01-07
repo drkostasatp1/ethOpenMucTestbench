@@ -110,5 +110,5 @@ After this initial steps the demo should be ready to connect to OpenMuc and the 
 
 After that, the running Project should look like this:
 
-![](testBenchRunning)
+![](testBenchRunning.png)
 
