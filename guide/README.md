@@ -5,7 +5,7 @@ Requirements: Java JRE, (Git), OpenMuc
  
 
 Your system must be configured to host a Java JRE Environment and the Java JDK must be available to compile the source. 
-I tested the commands in thei guide using JDK Update 151. 
+I tested the commands in this guide using JDK Update 151. 
 
  
 ## Install Geth for Windows
