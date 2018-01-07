@@ -1,5 +1,9 @@
 # Installing the EthTestbench on a Windows machine, step by step Quick Start Guide
-Requirements: Java JRE, (Git), OpenMuc
+Requirements: 
+- Java JRE
+- Java JDK
+- Git, optional 
+- OpenMuc
 
 ## Install a Java JDK
  
@@ -61,7 +65,7 @@ true
 
 ## Install Openmuc
 
-Download the latest Version of Openmuc from https://www.openmuc.org/openmuc/download/
+Download the latest Version of Openmuc from [here](https://www.openmuc.org/openmuc/download/)
 In this guide i will use version 0.16.0.
 
 2) Unpack the downloaded archive, and use a terminal session to launch the openmuc demo using 
